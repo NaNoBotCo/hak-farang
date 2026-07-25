@@ -1,0 +1,78 @@
+---
+import { getCollection } from "astro:content";
+import Base from "@/layouts/Base.astro";
+import ArticleCard from "@/components/ArticleCard.astro";
+import TuBun from "@/components/TuBun.astro";
+import MalaiDivider from "@/components/motifs/MalaiDivider.astro";
+import LotusMark from "@/components/motifs/LotusMark.astro";
+import { PILLARS, ACCENT_CLASSES } from "@/data/pillars";
+
+const all = (await getCollection("articles", ({ data }) => !data.draft)).sort(
+  (a, b) => +b.data.date - +a.data.date,
+);
+// launch content set = 9 (เลข ๙)
+const latest = all.slice(0, 9);
+---
+
+<Base title="ฮักฝรั่ง">
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="mx-auto max-w-xl px-4 pb-6 pt-10 text-center">
+      <div class="mb-3 flex justify-center">
+        <LotusMark size={40} />
+      </div>
+      <h1 class="text-[2.4rem] leading-tight text-naga-800">
+        เรื่องที่บ่มีไผบอกเฮา<br />
+        <span class="text-marigold-600">เป็นภาษาเฮา</span>
+      </h1>
+      <p class="mx-auto mt-4 max-w-md text-lg text-ink-soft">
+        เงิน · วีซ่า · เที่ยว · ชีวิตกับแฟนฝรั่ง — เหมือนมีพี่สาวที่ผ่านมาก่อน
+        คอยบอกให้ ไม่ตัดสิน ไม่ต้องอาย อ่านฟรีทุกอย่าง
+      </p>
+    </div>
+  </section>
+
+  <!-- Pillars -->
+  <section class="mx-auto max-w-xl px-4">
+    <div class="grid grid-cols-2 gap-3">
+      {
+        PILLARS.map((p) => {
+          const a = ACCENT_CLASSES[p.accent];
+          return (
+            <a href={`/${p.roman}`} class="lift block no-underline">
+              <div class={`h-full rounded-[var(--radius-card)] border border-marigold-100 bg-white/70 p-4 shadow-sm`}>
+                <div class={`inline-flex h-11 w-11 items-center justify-center rounded-full text-2xl ${a.chipBg}`}>
+                  {p.emoji}
+                </div>
+                <p class="mt-2.5 font-[var(--font-display)] text-lg font-medium text-naga-800">
+                  {p.label}
+                </p>
+                <p class="mt-0.5 text-sm leading-snug text-ink-soft">{p.tagline}</p>
+              </div>
+            </a>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <MalaiDivider />
+
+  <!-- Latest -->
+  <section class="mx-auto max-w-xl px-4">
+    <h2 class="flourish text-2xl text-naga-700">อ่านล่าสุด</h2>
+    {
+      latest.length === 0 ? (
+        <p class="mt-4 rounded-[var(--radius-card)] bg-white/60 p-6 text-center text-ink-soft">
+          กำลังเขียนบทความชุดแรก ๙ เรื่อง เดี๋ยวมาเน้อ 🌸
+        </p>
+      ) : (
+        <div class="mt-4 grid gap-4">
+          {latest.map((entry) => <ArticleCard entry={entry} showPillar />)}
+        </div>
+      )
+    }
+  </section>
+
+  <TuBun />
+</Base>

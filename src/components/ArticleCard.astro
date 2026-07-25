@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { PILLAR_BY_ID, ACCENT_CLASSES } from "@/data/pillars";
+
+interface Props {
+  entry: CollectionEntry<"articles">;
+  showPillar?: boolean;
+}
+const { entry, showPillar = false } = Astro.props;
+const d = entry.data;
+const pillar = PILLAR_BY_ID[d.pillar];
+const accent = ACCENT_CLASSES[pillar.accent];
+const href = `/${pillar.roman}/${entry.id}`;
+---
+
+<a href={href} class="lift block no-underline">
+  <article
+    class="rounded-[var(--radius-card)] border border-marigold-100 bg-white/70 p-5 shadow-sm"
+  >
+    <div class="flex items-center gap-2 text-sm">
+      {
+        showPillar && (
+          <span class={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 ${accent.chipBg} ${accent.chipText}`}>
+            <span aria-hidden="true">{pillar.emoji}</span> {pillar.label}
+          </span>
+        )
+      }
+      {
+        d.merit && (
+          <span class="inline-flex items-center gap-1 rounded-full bg-naga-100 px-2.5 py-0.5 text-naga-700">
+            🕊️ ฟรีเสมอ
+          </span>
+        )
+      }
+    </div>
+    <h3 class="mt-2 text-xl leading-snug text-naga-800">{d.title_th}</h3>
+    <p class="mt-1.5 text-[1rem] leading-snug text-ink-soft">{d.summary}</p>
+    <span class={`mt-3 inline-block text-sm font-medium ${accent.text}`}>อ่านต่อ →</span>
+  </article>
+</a>

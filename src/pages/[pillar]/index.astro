@@ -1,0 +1,42 @@
+---
+import { getCollection } from "astro:content";
+import Base from "@/layouts/Base.astro";
+import ArticleCard from "@/components/ArticleCard.astro";
+import NagaDivider from "@/components/motifs/NagaDivider.astro";
+import { PILLARS, PILLAR_BY_ID, ACCENT_CLASSES } from "@/data/pillars";
+
+export async function getStaticPaths() {
+  return PILLARS.map((p) => ({ params: { pillar: p.roman }, props: { pillarId: p.id } }));
+}
+
+const { pillarId } = Astro.props;
+const pillar = PILLAR_BY_ID[pillarId];
+const accent = ACCENT_CLASSES[pillar.accent];
+
+const articles = (await getCollection("articles", ({ data }) => !data.draft && data.pillar === pillarId))
+  .sort((a, b) => a.data.order - b.data.order || +b.data.date - +a.data.date);
+---
+
+<Base title={`${pillar.label} — ฮักฝรั่ง`} description={pillar.tagline}>
+  <section class="mx-auto max-w-xl px-4 pt-8">
+    <div class={`inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-lg ${accent.chipBg} ${accent.chipText}`}>
+      <span aria-hidden="true">{pillar.emoji}</span> {pillar.label}
+    </div>
+    <h1 class="mt-4 text-3xl text-naga-800">{pillar.label}</h1>
+    <p class="mt-2 text-lg text-ink-soft">{pillar.tagline}</p>
+
+    <NagaDivider />
+
+    {
+      articles.length === 0 ? (
+        <p class="rounded-[var(--radius-card)] bg-white/60 p-6 text-center text-ink-soft">
+          กำลังเขียนอยู่เจ้า เดี๋ยวมาเติมให้ครบ 🌸
+        </p>
+      ) : (
+        <div class="grid gap-4">
+          {articles.map((entry) => <ArticleCard entry={entry} />)}
+        </div>
+      )
+    }
+  </section>
+</Base>

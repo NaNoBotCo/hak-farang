@@ -1,0 +1,73 @@
+---
+import { AFFILIATES, type AffiliateSlotId } from "@/data/affiliates";
+
+/**
+ * Affiliate card with plain Thai disclosure baked in. Renders nothing when the
+ * offer isn't live yet, so drafts don't ship dead links.
+ */
+interface Props {
+  slot: AffiliateSlotId;
+}
+const { slot } = Astro.props;
+const offer = AFFILIATES[slot];
+---
+
+{
+  offer && offer.live && (
+    <aside class="affil not-prose lift">
+      <div class="affil__emoji" aria-hidden="true">{offer.emoji}</div>
+      <div class="affil__body">
+        <p class="affil__title">{offer.title}</p>
+        <p class="affil__blurb">{offer.blurb}</p>
+        <a class="affil__cta press" href={offer.url} target="_blank" rel="sponsored noopener">
+          {offer.cta} →
+        </a>
+        <p class="affil__disc">ลิงก์นี้เฮาได้ค่าน้ำใจนิดหน่อย ราคาเจ้าเท่าเดิมเน้อ 🙏</p>
+      </div>
+    </aside>
+  )
+}
+
+<style>
+  .affil {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin: 1.75rem 0;
+    padding: 1.25rem;
+    border-radius: var(--radius-card);
+    background: var(--color-cream-deep);
+    border: 1px solid var(--color-marigold-200);
+  }
+  .affil__emoji {
+    font-size: 1.9rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .affil__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-naga-700);
+    margin: 0;
+  }
+  .affil__blurb {
+    margin: 0.25rem 0 0.75rem;
+    color: var(--color-ink-soft);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .affil__cta {
+    display: inline-block;
+    background: var(--color-marigold-400);
+    color: var(--color-naga-900);
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+    border-radius: 9999px;
+    text-decoration: none;
+  }
+  .affil__disc {
+    margin: 0.75rem 0 0;
+    font-size: 0.85rem;
+    color: var(--color-ink-soft);
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+/**
+ * Phuang malai (พวงมาลัย) garland divider — a string of marigold + jasmine
+ * beads. Marks the break between article sections. Warm, ceremonial.
+ */
+interface Props {
+  class?: string;
+}
+const { class: klass = "" } = Astro.props;
+
+// A little garland: alternating marigold buds and jasmine dots on a thread.
+const beads = Array.from({ length: 9 }, (_, i) => i);
+---
+
+<div class={`malai ${klass}`} role="separator" aria-hidden="true">
+  <svg viewBox="0 0 220 24" width="180" height="20">
+    <line x1="6" y1="12" x2="214" y2="12" stroke="var(--color-marigold-300)" stroke-width="1.25" />
+    {
+      beads.map((i) => {
+        const x = 14 + i * 24;
+        const marigold = i % 2 === 0;
+        return marigold ? (
+          <g transform={`translate(${x} 12)`}>
+            <circle r="5.5" fill="var(--color-marigold-400)" />
+            <circle r="2.4" fill="var(--color-marigold-200)" />
+          </g>
+        ) : (
+          <circle cx={x} cy={12} r="3" fill="var(--color-cream)" stroke="var(--color-marigold-300)" stroke-width="1.2" />
+        );
+      })
+    }
+  </svg>
+</div>
+
+<style>
+  .malai {
+    display: flex;
+    justify-content: center;
+    margin-block: 2rem;
+  }
+</style>

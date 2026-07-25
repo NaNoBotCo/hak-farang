@@ -1,0 +1,214 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Base from "./Base.astro";
+import Checklist from "@/components/Checklist.tsx";
+import ShareBar from "@/components/ShareBar.astro";
+import AffiliateSlot from "@/components/AffiliateSlot.astro";
+import TuBun from "@/components/TuBun.astro";
+import MalaiDivider from "@/components/motifs/MalaiDivider.astro";
+import { PILLAR_BY_ID, ACCENT_CLASSES } from "@/data/pillars";
+
+interface Props {
+  entry: CollectionEntry<"articles">;
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const pillar = PILLAR_BY_ID[d.pillar];
+const accent = ACCENT_CLASSES[pillar.accent];
+
+const accentHex = {
+  marigold: "#f2a93b",
+  naga: "#1f6559",
+  lotus: "#ee7fa6",
+}[pillar.accent];
+
+const url = new URL(`/${pillar.roman}/${entry.id}`, Astro.site ?? Astro.url.origin).href;
+const ogImage = `/og/${entry.id}.png`;
+
+const verified = new Date(d.last_verified).toLocaleDateString("th-TH", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Base title={d.title_th} description={d.summary} ogImage={ogImage} ogType="article">
+  <article class="mx-auto max-w-xl px-4 pt-6">
+    <!-- pillar + verification -->
+    <div class="mb-3 flex flex-wrap items-center gap-2 text-sm">
+      <a
+        href={`/${pillar.roman}`}
+        class={`inline-flex items-center gap-1 rounded-full px-3 py-1 no-underline ${accent.chipBg} ${accent.chipText}`}
+      >
+        <span aria-hidden="true">{pillar.emoji}</span> {pillar.label}
+      </a>
+      {
+        d.merit && (
+          <span class="inline-flex items-center gap-1 rounded-full bg-naga-100 px-3 py-1 text-naga-700">
+            🕊️ อ่านฟรีเสมอ
+          </span>
+        )
+      }
+    </div>
+
+    <h1 class="text-[1.9rem] leading-tight text-naga-800">{d.title_th}</h1>
+    <p class="mt-3 text-lg text-ink-soft">{d.summary}</p>
+
+    <p class="mt-4 text-sm text-ink-soft">
+      🗓️ ตรวจสอบล่าสุด: <strong class="text-naga-600">{verified}</strong>
+      {d.title_en && (
+        <>
+          {" · "}
+          <a href={`/en/${entry.id}`} class="text-naga-600">ส่งหน้านี้ให้แฟนอ่าน (EN)</a>
+        </>
+      )}
+    </p>
+
+    <MalaiDivider />
+
+    <!-- article body -->
+    <div class="prose-hf">
+      <slot />
+    </div>
+
+    <!-- checklist rendering, driven from frontmatter -->
+    {
+      d.checklist.length > 0 && (
+        <section class="mt-4">
+          <h2 class="text-xl text-naga-700">เช็กลิสต์ · เซฟไว้ทำตามได้เลย</h2>
+          <Checklist client:visible slug={entry.id} items={d.checklist} accent={accentHex} />
+        </section>
+      )
+    }
+
+    <!-- affiliate slots -->
+    {d.affiliate_slots.map((slot) => <AffiliateSlot slot={slot} />)}
+
+    <!-- premium pack teaser (never on merit content) -->
+    {
+      !d.merit && d.pack && (
+        <aside class="mt-6 rounded-[var(--radius-card)] border border-marigold-200 bg-marigold-50 p-5">
+          <p class="font-[var(--font-display)] font-semibold text-naga-700">
+            📦 {d.pack.title}
+          </p>
+          <p class="mt-1 text-ink-soft">
+            บทความอ่านฟรีครบทุกอย่าง — แพ็กนี้คือความสะดวก: ฟอร์มกรอกได้ ปรินต์ได้
+            เอกสารครบพร้อมยื่น
+          </p>
+          <a
+            href={d.pack.url}
+            target="_blank"
+            rel="noopener"
+            class="press mt-3 inline-block rounded-full bg-marigold-400 px-5 py-2.5 font-semibold text-naga-900 no-underline"
+          >
+            ดูแพ็ก · {d.pack.price_thb} บาท
+          </a>
+        </aside>
+      )
+    }
+
+    <TuBun />
+
+    <!-- sources — the trust spine -->
+    {
+      d.sources.length > 0 && (
+        <section class="mt-8 rounded-[var(--radius-card)] border border-naga-100 bg-white/60 p-5">
+          <h2 class="text-base text-naga-700">📚 แหล่งอ้างอิง</h2>
+          <p class="mt-1 text-sm text-ink-soft">
+            ข้อมูลเรื่องวีซ่า/กฎหมาย/สิทธิ์ เฮาตรวจจากแหล่งจริง ไม่เดาเอง
+            เจ้าเช็กต่อได้เลย
+          </p>
+          <ol class="mt-3 list-decimal space-y-1.5 ps-5 text-sm">
+            {d.sources.map((s) => (
+              <li>
+                {s.url ? (
+                  <a href={s.url} target="_blank" rel="noopener" class="text-naga-600">
+                    {s.label}
+                  </a>
+                ) : (
+                  <span>{s.label}</span>
+                )}
+                {s.checked && <span class="text-ink-soft"> — เช็ก {s.checked}</span>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+  </article>
+
+  <ShareBar url={url} shareText={d.share_text} title={d.title_th} />
+</Base>
+
+<style is:global>
+  /* Article prose — generous, warm, lotus bullets, malai section breaks. */
+  .prose-hf {
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: var(--color-ink);
+  }
+  .prose-hf > h2 {
+    margin-top: 2.25rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    color: var(--color-naga-700);
+  }
+  .prose-hf > h3 {
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    color: var(--color-naga-600);
+  }
+  .prose-hf p {
+    margin-block: 1rem;
+  }
+  .prose-hf a {
+    color: var(--color-naga-600);
+    text-decoration: underline;
+  }
+  .prose-hf strong {
+    color: var(--color-naga-800);
+  }
+  .prose-hf ul {
+    list-style: none;
+    padding-inline-start: 0.25rem;
+    margin-block: 1rem;
+  }
+  .prose-hf ul > li {
+    position: relative;
+    padding-inline-start: 1.75rem;
+    margin-block: 0.5rem;
+  }
+  .prose-hf ul > li::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.55em;
+    width: 0.7rem;
+    height: 0.7rem;
+    background: var(--color-lotus-400);
+    /* lotus-ish rounded diamond */
+    border-radius: 60% 0 60% 0;
+    transform: rotate(45deg);
+    opacity: 0.85;
+  }
+  .prose-hf ol {
+    padding-inline-start: 1.4rem;
+    margin-block: 1rem;
+  }
+  .prose-hf ol > li {
+    margin-block: 0.5rem;
+  }
+  .prose-hf blockquote {
+    margin: 1.5rem 0;
+    padding: 0.75rem 1.25rem;
+    border-inline-start: 4px solid var(--color-marigold-300);
+    background: var(--color-marigold-50);
+    border-radius: 0 1rem 1rem 0;
+    color: var(--color-naga-800);
+  }
+  .prose-hf h2 + p,
+  .prose-hf h3 + p {
+    margin-top: 0.25rem;
+  }
+</style>

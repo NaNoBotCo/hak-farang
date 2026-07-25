@@ -1,0 +1,86 @@
+---
+/**
+ * Sticky mobile share bar. The Facebook group feed is the real homepage, so
+ * sharing is first-class: LINE + FB + copy-link-with-pre-written-Thai-text.
+ * The share button is a phuang malai — "ส่งต่อบุญ".
+ */
+interface Props {
+  url: string;
+  shareText: string;
+  title: string;
+}
+const { url, shareText, title } = Astro.props;
+
+const encodedUrl = encodeURIComponent(url);
+const lineHref = `https://social-plugins.line.me/lineit/share?url=${encodedUrl}`;
+const fbHref = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+---
+
+<div
+  class="glass fixed inset-x-0 bottom-0 z-40 border-t border-marigold-200/60 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2"
+  data-share-bar
+  data-url={url}
+  data-text={shareText}
+  data-title={title}
+>
+  <div class="mx-auto flex max-w-xl items-center gap-2">
+    <a
+      href={lineHref}
+      target="_blank"
+      rel="noopener"
+      class="press flex flex-1 items-center justify-center gap-2 rounded-full bg-[#06C755] px-4 py-3 font-medium text-white shadow-sm"
+    >
+      <span aria-hidden="true">💬</span> LINE
+    </a>
+    <a
+      href={fbHref}
+      target="_blank"
+      rel="noopener"
+      class="press flex flex-1 items-center justify-center gap-2 rounded-full bg-[#1877F2] px-4 py-3 font-medium text-white shadow-sm"
+    >
+      <span aria-hidden="true">📘</span> แชร์
+    </a>
+    <button
+      type="button"
+      data-copy
+      class="press flex items-center justify-center gap-2 rounded-full bg-marigold-400 px-4 py-3 font-medium text-naga-900 shadow-sm"
+    >
+      <span aria-hidden="true">🌸</span>
+      <span data-copy-label>ส่งต่อบุญ</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>("[data-share-bar]");
+  if (bar) {
+    const url = bar.dataset.url ?? location.href;
+    const text = bar.dataset.text ?? "อ่านอันนี้เด้อ 👇";
+    const title = bar.dataset.title ?? document.title;
+    const btn = bar.querySelector<HTMLButtonElement>("[data-copy]");
+    const label = bar.querySelector<HTMLElement>("[data-copy-label]");
+
+    btn?.addEventListener("click", async () => {
+      const payload = `${text}\n${url}`;
+      // Prefer the native share sheet on mobile (LINE, Messenger, etc.).
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, text, url });
+          return;
+        } catch {
+          /* user cancelled — fall through to copy */
+        }
+      }
+      try {
+        await navigator.clipboard.writeText(payload);
+        if (label) {
+          const prev = label.textContent;
+          label.textContent = "ก๊อปปี้แล้ว ✓";
+          setTimeout(() => (label.textContent = prev), 1800);
+        }
+      } catch {
+        /* clipboard blocked — no-op */
+      }
+    });
+  }
+</script>

@@ -1,0 +1,64 @@
+---
+import "@/styles/global.css";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Absolute or root-relative OG image URL. */
+  ogImage?: string;
+  ogType?: "website" | "article";
+  /** Hide the pillar header (e.g. for the OG debug view). */
+  bareHeader?: boolean;
+}
+
+const {
+  title,
+  description = "พี่สาวที่ผ่านมาก่อน — เรื่องเงิน วีซ่า เที่ยว และชีวิตกับแฟนฝรั่ง อ่านฟรี ไม่ต้องอาย",
+  ogImage = "/og-default.png",
+  ogType = "website",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const ogAbsolute = new URL(ogImage, Astro.site ?? Astro.url.origin);
+const fullTitle = title === "ฮักฝรั่ง" ? title : `${title} · ฮักฝรั่ง`;
+---
+
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <meta name="theme-color" content="#f2a93b" />
+
+    <!-- Open Graph — the Facebook feed is the real homepage -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogAbsolute.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="th_TH" />
+    <meta property="og:site_name" content="ฮักฝรั่ง" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-marigold-400 focus:px-3 focus:py-2"
+      >ข้ามไปเนื้อหา</a
+    >
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

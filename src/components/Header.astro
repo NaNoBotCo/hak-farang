@@ -1,0 +1,45 @@
+---
+import { PILLARS, ACCENT_CLASSES } from "@/data/pillars";
+import LotusMark from "./motifs/LotusMark.astro";
+
+/** Mobile-first top bar + horizontally-scrollable pillar chips. */
+const path = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-30 glass border-b border-marigold-200/50">
+  <div class="mx-auto flex max-w-xl items-center gap-2 px-4 py-3">
+    <a href="/" class="flex items-center gap-2 no-underline">
+      <LotusMark size={26} />
+      <span class="font-[var(--font-display)] text-xl font-semibold text-naga-700">
+        ฮักฝรั่ง
+      </span>
+    </a>
+    <span class="ms-auto text-xs text-ink-soft">พี่สาวที่ผ่านมาก่อน</span>
+  </div>
+
+  <nav aria-label="หมวดหลัก" class="border-t border-marigold-100/70">
+    <ul class="mx-auto flex max-w-xl gap-2 overflow-x-auto px-4 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {
+        PILLARS.map((p) => {
+          const active = path.startsWith(`/${p.roman}`);
+          const a = ACCENT_CLASSES[p.accent];
+          return (
+            <li>
+              <a
+                href={`/${p.roman}`}
+                class={`press flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[0.95rem] font-medium no-underline ring-1 ${
+                  active
+                    ? `${a.bg} text-white ring-transparent`
+                    : `${a.chipBg} ${a.chipText} ring-transparent`
+                }`}
+              >
+                <span aria-hidden="true">{p.emoji}</span>
+                {p.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+</header>

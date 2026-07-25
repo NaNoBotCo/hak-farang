@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+/* Self-hosted Thai type — offline-buildable, satori-friendly.
+   Display = Mitr (warm, rounded personality). Body = Noto Sans Thai. */
+@import "@fontsource/mitr/300.css";
+@import "@fontsource/mitr/400.css";
+@import "@fontsource/mitr/500.css";
+@import "@fontsource/mitr/600.css";
+@import "@fontsource/noto-sans-thai/400.css";
+@import "@fontsource/noto-sans-thai/500.css";
+@import "@fontsource/noto-sans-thai/700.css";
+
+/* ---------------------------------------------------------------------------
+   Design tokens — "golden-hour temple fair, not fintech."
+   Marigold gold (ดอกไม้ดาวเรือง / merit) primary · deep naga green-teal
+   structure · lotus pink accents · cream paper, never stark white.
+--------------------------------------------------------------------------- */
+@theme {
+  /* Marigold — primary. Warmth, merit, brightness. */
+  --color-marigold-50: #fef6e7;
+  --color-marigold-100: #fcebc5;
+  --color-marigold-200: #f8d68a;
+  --color-marigold-300: #f4c158;
+  --color-marigold-400: #f2a93b;
+  --color-marigold-500: #e4941f;
+  --color-marigold-600: #c4770f;
+  --color-marigold-700: #9c5c0e;
+  --color-marigold-800: #7a4810;
+  --color-marigold-900: #5f3a12;
+
+  /* Naga — deep green-teal. Structure, trust, the scaled spine of the site. */
+  --color-naga-50: #e8f2f0;
+  --color-naga-100: #c7ded9;
+  --color-naga-200: #93c0b7;
+  --color-naga-300: #5e9e92;
+  --color-naga-400: #3a8073;
+  --color-naga-500: #1f6559;
+  --color-naga-600: #175248;
+  --color-naga-700: #124038;
+  --color-naga-800: #0e322c;
+  --color-naga-900: #0a2620;
+
+  /* Lotus — soft pink accent. Care, tenderness, the heart pillar. */
+  --color-lotus-200: #fbd3e1;
+  --color-lotus-300: #f5a8c4;
+  --color-lotus-400: #ee7fa6;
+  --color-lotus-500: #e45c8a;
+
+  /* Paper & ink — cream ground, warm near-black text. */
+  --color-cream: #fbf6ec;
+  --color-cream-deep: #f4ead2;
+  --color-ink: #2a2320;
+  --color-ink-soft: #5c5148;
+
+  /* Fonts */
+  --font-display: "Mitr", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Noto Sans Thai", ui-sans-serif, system-ui, sans-serif;
+
+  /* Generous radii — friendly, not corporate. */
+  --radius-card: 1.25rem;
+
+  /* Easing for squishy micro-delight */
+  --ease-squish: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Base — audience skews 35+ on phones: generous body size, high contrast.
+--------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 1.125rem; /* 18px floor */
+    line-height: 1.7;
+    /* warm paper wash + faint naga-scale texture at the top */
+    background-image:
+      radial-gradient(120% 60% at 50% -10%, rgba(242, 169, 59, 0.14), transparent 60%);
+    background-repeat: no-repeat;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--color-naga-700);
+  }
+
+  a {
+    color: var(--color-naga-600);
+    text-underline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-marigold-200);
+    color: var(--color-naga-800);
+  }
+
+  /* Respect reduced-motion for every animation on the site. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reusable delight utilities
+--------------------------------------------------------------------------- */
+@layer components {
+  /* Squishy, magnetic press for buttons & cards */
+  .press {
+    transition:
+      transform 0.18s var(--ease-squish),
+      box-shadow 0.18s ease,
+      background-color 0.18s ease;
+  }
+  .press:active {
+    transform: scale(0.96);
+  }
+
+  /* Soft card lift on hover (desktop afterthought, but pleasant) */
+  .lift {
+    transition: transform 0.25s var(--ease-squish), box-shadow 0.25s ease;
+  }
+  @media (hover: hover) {
+    .lift:hover {
+      transform: translateY(-3px);
+    }
+  }
+
+  /* Warm glass — for the sticky share bar */
+  .glass {
+    background: color-mix(in srgb, var(--color-cream) 78%, transparent);
+    backdrop-filter: saturate(150%) blur(12px);
+    -webkit-backdrop-filter: saturate(150%) blur(12px);
+  }
+
+  /* The gold ๙ accent flourish */
+  .flourish::before {
+    content: "๙";
+    font-family: var(--font-display);
+    color: var(--color-marigold-500);
+    margin-inline-end: 0.4em;
+    opacity: 0.9;
+  }
+}
+
+/* Gold sparkle keyframe shared by the checklist island */
+@keyframes hf-sparkle {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  40% { transform: scale(1.15) rotate(90deg); opacity: 1; }
+  100% { transform: scale(0) rotate(180deg); opacity: 0; }
+}
