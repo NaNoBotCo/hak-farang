@@ -24,14 +24,16 @@ so nothing dead ships in the meantime.
 5. In LINE OA Manager: set up the **auto-reply / rich menu** routing to the top
    pages, and use **broadcast** to push each new article.
 
-## 3. First premium pack — Schengen  ✅ decided
+## 3. First premium pack — Schengen  ✅ BUILT
 
-- Build the pack content: checklist + fill-in invitation letter + sponsor letter
-  + timeline + "what the officer asks". The free article is already complete;
-  the pack is the convenience layer.
-- Create the Gumroad product (฿299, ends in ๙).
-- Put the Gumroad URL in the Schengen article's frontmatter `pack.url`
-  (`src/content/articles/schengen-sponsor.md`), replacing `#pack-schengen`.
+- **Product file is ready:** `packs/schengen/แพ็กวีซ่าเชงเก้น-hakfarang.zip`
+  (7 files: branded guide in Word+PDF, 4 fill-in letter/itinerary templates,
+  a Thai Read Me). Regenerate any time with:
+  `cd packs/schengen && node build_pack.cjs` then re-zip (see that script's header).
+- **Remaining (yours):** create the Gumroad product (฿299, ends in ๙), upload the
+  zip, then put the Gumroad URL in the Schengen article's frontmatter `pack.url`
+  (`src/content/articles/schengen-sponsor.md`), replacing `#pack-schengen`,
+  and `npm run build` + deploy.
 
 ## 4. Affiliates  ✅ decided: existing entity
 

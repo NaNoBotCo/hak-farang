@@ -23,3 +23,6 @@ pnpm-debug.log*
 # editor
 .vscode/
 .idea/
+
+# pack builder deps
+packs/*/node_modules/
