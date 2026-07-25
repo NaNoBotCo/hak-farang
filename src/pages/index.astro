@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Base from "@/layouts/Base.astro";
 import ArticleCard from "@/components/ArticleCard.astro";
 import TuBun from "@/components/TuBun.astro";
+import LineSubscribe from "@/components/LineSubscribe.astro";
 import MalaiDivider from "@/components/motifs/MalaiDivider.astro";
 import LotusMark from "@/components/motifs/LotusMark.astro";
 import { PILLARS, ACCENT_CLASSES } from "@/data/pillars";
@@ -54,6 +55,7 @@ const latest = all.slice(0, 9);
         })
       }
     </div>
+    <LineSubscribe />
   </section>
 
   <MalaiDivider />

@@ -5,6 +5,7 @@ import Checklist from "@/components/Checklist.tsx";
 import ShareBar from "@/components/ShareBar.astro";
 import AffiliateSlot from "@/components/AffiliateSlot.astro";
 import TuBun from "@/components/TuBun.astro";
+import LineSubscribe from "@/components/LineSubscribe.astro";
 import MalaiDivider from "@/components/motifs/MalaiDivider.astro";
 import { PILLAR_BY_ID, ACCENT_CLASSES } from "@/data/pillars";
 
@@ -106,6 +107,8 @@ const verified = new Date(d.last_verified).toLocaleDateString("th-TH", {
         </aside>
       )
     }
+
+    <LineSubscribe compact />
 
     <TuBun />
 

@@ -2,8 +2,9 @@
 import { TU_BUN } from "@/data/affiliates";
 
 /**
- * ตู้บุญ — merit box. One-tap donation framed as ทำบุญให้น้องคนต่อไป:
+ * ตู้บุญ — merit box (PromptPay QR). Framed as ทำบุญให้น้องคนต่อไป:
  * "your กำลังใจ keeps the next sister's guide free." Shows a running total.
+ * Until `ready`, shows a gentle "coming soon" so no dead QR ships.
  */
 const total = TU_BUN.totalTHB.toLocaleString("th-TH");
 ---
@@ -15,9 +16,34 @@ const total = TU_BUN.totalTHB.toLocaleString("th-TH");
     เว็บนี้ทำให้อ่านฟรี ไม่มีค่าใช้จ่าย ถ้าอันนี้ช่วยเจ้าได้
     ฝากทำบุญเผื่อแผ่ให้น้องคนต่อไป ให้เขาได้อ่านฟรีเหมือนกันเน้อ
   </p>
-  <a class="tubun__cta press" href={TU_BUN.url} target="_blank" rel="noopener">
-    ทำบุญให้น้องคนต่อไป 🙏
-  </a>
+
+  {
+    TU_BUN.ready ? (
+      <div class="tubun__qrwrap">
+        <img
+          class="tubun__qr"
+          src={TU_BUN.qr}
+          width="220"
+          height="220"
+          alt="PromptPay QR สำหรับทำบุญให้ฮักฝรั่ง"
+          loading="lazy"
+        />
+        <p class="tubun__scan">สแกนด้วยแอปธนาคาร · PromptPay</p>
+        {TU_BUN.promptpayName && <p class="tubun__name">{TU_BUN.promptpayName}</p>}
+        <p class="tubun__amounts">
+          ทำบุญเท่าไหร่ก็ได้
+          {TU_BUN.suggestTHB.length > 0 && (
+            <span> · เช่น {TU_BUN.suggestTHB.map((a) => `${a}฿`).join(" / ")}</span>
+          )}
+        </p>
+      </div>
+    ) : (
+      <p class="tubun__soon">
+        🌸 ตู้บุญ (PromptPay) กำลังจะเปิดเร็ว ๆ นี้ — ตอนนี้แค่อ่านให้สนุกก่อนเน้อ
+      </p>
+    )
+  }
+
   {
     TU_BUN.supporters > 0 && (
       <p class="tubun__count">
@@ -36,13 +62,8 @@ const total = TU_BUN.totalTHB.toLocaleString("th-TH");
     background: radial-gradient(120% 100% at 50% 0%, var(--color-naga-50), var(--color-cream-deep));
     border: 1px solid var(--color-naga-200);
   }
-  .tubun__glyph {
-    font-size: 1.5rem;
-  }
-  .tubun__title {
-    margin: 0.25rem 0 0.5rem;
-    color: var(--color-naga-700);
-  }
+  .tubun__glyph { font-size: 1.5rem; }
+  .tubun__title { margin: 0.25rem 0 0.5rem; color: var(--color-naga-700); }
   .tubun__lead {
     margin: 0 auto 1.1rem;
     max-width: 30rem;
@@ -50,18 +71,30 @@ const total = TU_BUN.totalTHB.toLocaleString("th-TH");
     font-size: 1rem;
     line-height: 1.6;
   }
-  .tubun__cta {
-    display: inline-block;
-    background: var(--color-naga-500);
-    color: #fff;
-    font-weight: 600;
-    padding: 0.7rem 1.4rem;
-    border-radius: 9999px;
-    text-decoration: none;
+  .tubun__qrwrap {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 1rem;
+    background: #fff;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-naga-100);
+    box-shadow: 0 12px 30px -20px rgba(31, 101, 89, 0.6);
   }
-  .tubun__count {
-    margin: 0.9rem 0 0;
-    font-size: 0.9rem;
+  .tubun__qr { display: block; border-radius: 0.5rem; }
+  .tubun__scan { margin: 0.2rem 0 0; font-size: 0.85rem; color: var(--color-naga-600); }
+  .tubun__name { margin: 0; font-weight: 600; color: var(--color-naga-700); }
+  .tubun__amounts { margin: 0.35rem 0 0; font-size: 0.9rem; color: var(--color-ink-soft); }
+  .tubun__soon {
+    margin: 0.5rem auto 0;
+    max-width: 28rem;
+    padding: 0.9rem 1rem;
+    background: var(--color-cream);
+    border: 1px dashed var(--color-naga-200);
+    border-radius: var(--radius-card);
     color: var(--color-naga-600);
+    font-size: 0.95rem;
   }
+  .tubun__count { margin: 0.9rem 0 0; font-size: 0.9rem; color: var(--color-naga-600); }
 </style>

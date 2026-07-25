@@ -1,0 +1,70 @@
+---
+import { LINE_OA } from "@/data/line";
+
+/**
+ * LINE OA add-friend card. Retention channel — new articles get broadcast here.
+ * Renders nothing until the OA is set up (`ready`), so no dead button ships.
+ */
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+{
+  LINE_OA.ready && (
+    <section class={`linecard ${compact ? "linecard--compact" : ""}`}>
+      <div class="linecard__body">
+        <p class="linecard__title">รับบทความใหม่ทาง LINE</p>
+        <p class="linecard__lead">
+          กดเพิ่มเพื่อน แล้วมีอะไรใหม่ ๆ พี่ส่งให้อ่านก่อนใครเลยเน้อ
+        </p>
+        <a
+          class="linecard__cta press"
+          href={LINE_OA.addFriendUrl}
+          target="_blank"
+          rel="noopener"
+        >
+          💬 เพิ่มเพื่อนใน LINE
+        </a>
+      </div>
+      {!compact && (
+        <img
+          class="linecard__qr"
+          src={LINE_OA.qr}
+          width="120"
+          height="120"
+          alt={`LINE QR สำหรับเพิ่มเพื่อน ${LINE_OA.basicId}`}
+          loading="lazy"
+        />
+      )}
+    </section>
+  )
+}
+
+<style>
+  .linecard {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin: 2rem 0;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-card);
+    background: linear-gradient(135deg, #06c755 0%, #05a648 100%);
+    color: #fff;
+  }
+  .linecard--compact { margin: 1.5rem 0; }
+  .linecard__title { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
+  .linecard__lead { margin: 0.25rem 0 0.85rem; font-size: 0.95rem; opacity: 0.95; }
+  .linecard__cta {
+    display: inline-block;
+    background: #fff;
+    color: #05a648;
+    font-weight: 700;
+    padding: 0.6rem 1.2rem;
+    border-radius: 9999px;
+    text-decoration: none;
+  }
+  .linecard__qr { border-radius: 0.75rem; background: #fff; padding: 0.35rem; flex-shrink: 0; }
+</style>

@@ -76,11 +76,24 @@ export const AFFILIATES: Record<AffiliateSlotId, AffiliateOffer> = {
   },
 };
 
-/** ตู้บุญ — merit box. One-tap donation, framed as ทำบุญให้น้องคนต่อไป. */
+/**
+ * ตู้บุญ — merit box. Processor = PromptPay QR (zero fees, Thai-native).
+ *
+ * To go live:
+ *   1. Open your banking app → PromptPay → "รับเงิน / My QR" → save/share the QR image.
+ *   2. Drop it in `public/tubun-promptpay.png`.
+ *   3. Set `ready: true` and fill `promptpayName`.
+ * PromptPay QR carries no fixed amount, so donors give whatever they like.
+ * `totalTHB` / `supporters` are the public merit counter — update by hand.
+ */
 export const TU_BUN = {
-  // TODO: real Ko-fi / Stripe / PromptPay link (see README → decisions).
-  url: "#tubun",
-  // Public running total, updated by hand or a future webhook.
+  ready: false,
+  /** Path to the PromptPay QR you exported from your bank app. */
+  qr: "/tubun-promptpay.png",
+  /** Shown under the QR so donors know it's the right account. */
+  promptpayName: "",
+  /** Suggested amounts, ending in ๙ (auspicious). Any amount is fine. */
+  suggestTHB: [9, 99, 199],
   totalTHB: 0,
   supporters: 0,
 };
