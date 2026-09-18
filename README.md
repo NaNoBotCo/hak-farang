@@ -103,3 +103,13 @@ premium-pack CTA.
 - More country visa packs; "ทำไมโดน reject"; cold-climate survival; เกณฑ์ทหาร;
   Thai intestacy / มรดก; SSA survivor deep-dive.
 - Plausible/Cloudflare analytics snippet.
+
+
+## Licence
+
+Records, prose and pages: CC BY-SA 4.0. Code: AGPL-3.0-or-later. Anything
+carried in from elsewhere keeps its own terms — see [LICENSE](LICENSE).
+
+**Commercial licence.** If share-alike doesn't fit your use — a corpus, a
+product, a model — a commercial licence is available.
+[Open an issue](https://github.com/NaNoBotCo/hak-farang/issues) and say what you need.
