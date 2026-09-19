@@ -6,7 +6,7 @@ import LotusMark from "./motifs/LotusMark.astro";
 const path = Astro.url.pathname;
 ---
 
-<header class="sticky top-0 z-30 glass border-b border-marigold-200/50">
+<header data-topbar class="sticky top-0 z-30 glass border-b border-marigold-200/50">
   <div class="mx-auto flex max-w-xl items-center gap-2 px-4 py-3">
     <a href="/" class="flex items-center gap-2 no-underline">
       <LotusMark size={26} />
@@ -43,3 +43,27 @@ const path = Astro.url.pathname;
     </ul>
   </nav>
 </header>
+
+<script>
+  // The bar is two rows — a title row and the pillar chips — and it is sticky,
+  // so on a phone it held a sixth of the screen the whole way down a page.
+  // Scrolling down slides it off; any scroll up brings it back.
+  const bar = document.querySelector<HTMLElement>("header[data-topbar]");
+  if (bar) {
+    const body = document.body;
+    let last = window.pageYOffset;
+    let barHeight = bar.offsetHeight;
+    addEventListener("resize", () => { barHeight = bar.offsetHeight; }, { passive: true });
+    addEventListener("scroll", () => {
+      const y = window.pageYOffset;
+      const moved = y - last;
+      if (y <= barHeight || moved < -4) body.classList.remove("nav-away");
+      else if (moved > 4) body.classList.add("nav-away");
+      if (Math.abs(moved) > 1) last = y;
+    }, { passive: true });
+    // a chip reached by keyboard must never be the one that is off-screen
+    addEventListener("focusin", (e) => {
+      if (bar.contains(e.target as Node)) body.classList.remove("nav-away");
+    });
+  }
+</script>

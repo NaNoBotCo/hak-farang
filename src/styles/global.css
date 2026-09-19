@@ -165,3 +165,19 @@
   40% { transform: scale(1.15) rotate(90deg); opacity: 1; }
   100% { transform: scale(0) rotate(180deg); opacity: 0; }
 }
+
+/* ---------------------------------------------------------------------------
+   The top bar gets out of the way on a phone (2026-09-19)
+   Two rows, sticky, 16% of a 375x812 screen for the whole page. Scroll down
+   and it slides off; scroll up — any amount — and it comes back. Wider
+   screens, where the page has room to spare, keep it pinned.
+   Reduced motion already kills the transition, in @layer base above.
+--------------------------------------------------------------------------- */
+@media (max-width: 52rem) {
+  header[data-topbar] {
+    transition: transform 0.2s ease;
+  }
+  body.nav-away header[data-topbar] {
+    transform: translateY(-100%);
+  }
+}
