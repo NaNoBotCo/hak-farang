@@ -166,18 +166,16 @@
   100% { transform: scale(0) rotate(180deg); opacity: 0; }
 }
 
-/* ---------------------------------------------------------------------------
-   The top bar gets out of the way on a phone (2026-09-19)
-   Two rows, sticky, 16% of a 375x812 screen for the whole page. Scroll down
-   and it slides off; scroll up — any amount — and it comes back. Wider
-   screens, where the page has room to spare, keep it pinned.
-   Reduced motion already kills the transition, in @layer base above.
---------------------------------------------------------------------------- */
-@media (max-width: 52rem) {
-  header[data-topbar] {
-    transition: transform 0.2s ease;
-  }
-  body.nav-away header[data-topbar] {
-    transform: translateY(-100%);
-  }
+/* NaN, 2026-09-28: "isn't staying properly collapsed". The motdang home rule (9/22),
+   at every width: past the fold the nav and language switch fold away and the bar
+   keeps only the brand; scrolling down takes the bar; it returns on 90 px of
+   deliberate upward scroll or at the top. UP and DOWN accumulate separately. */
+header[data-topbar]{transition:transform .26s cubic-bezier(.4,0,.2,1),box-shadow .26s ease}
+body.nav-away header[data-topbar]{transform:translateY(-102%)}
+body.nav-tight header[data-topbar]{box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}
+header[data-topbar] nav{transition:opacity .18s ease,margin .26s ease}
+body.nav-tight header[data-topbar] nav{
+ opacity:0;max-height:0;margin-block:0;padding-block:0;border:0;overflow:hidden;pointer-events:none}
+@media (prefers-reduced-motion:reduce){
+ header[data-topbar],header[data-topbar] nav{transition:none}
 }

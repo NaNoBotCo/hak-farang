@@ -45,25 +45,44 @@ const path = Astro.url.pathname;
 </header>
 
 <script>
-  // The bar is two rows — a title row and the pillar chips — and it is sticky,
-  // so on a phone it held a sixth of the screen the whole way down a page.
-  // Scrolling down slides it off; any scroll up brings it back.
+  // The bar folds to its title row past the fold, leaves on scroll-down and returns
+  // on 90 px of deliberate scroll-up (motdang's rule, 2026-09-28). Up and down
+  // accumulate separately. The fold keeps the page's height: the chip row it drops
+  // becomes margin under the bar, so nothing below moves. Scroll anchoring is off for
+  // the instant of the fold: the height is read between the two steps, and Chrome
+  // anchored on that half-folded layout and threw the page back to the top.
   const bar = document.querySelector<HTMLElement>("header[data-topbar]");
   if (bar) {
     const body = document.body;
-    let last = window.pageYOffset;
-    let barHeight = bar.offsetHeight;
-    addEventListener("resize", () => { barHeight = bar.offsetHeight; }, { passive: true });
-    addEventListener("scroll", () => {
-      const y = window.pageYOffset;
-      const moved = y - last;
-      if (y <= barHeight || moved < -4) body.classList.remove("nav-away");
-      else if (moved > 4) body.classList.add("nav-away");
-      if (Math.abs(moved) > 1) last = y;
+    let y = window.pageYOffset, up = 0, dn = 0, ticking = false;
+    const tight = (on: boolean) => {
+      if (on === body.classList.contains("nav-tight")) return;
+      const root = document.documentElement.style;
+      root.overflowAnchor = "none";
+      bar.style.marginBottom = "";
+      const full = bar.offsetHeight;
+      body.classList.toggle("nav-tight", on);
+      if (on) bar.style.marginBottom = Math.max(0, full - bar.offsetHeight) + "px";
+      void bar.offsetHeight;
+      root.overflowAnchor = "";
+    };
+    const frame = () => {
+      ticking = false;
+      const n = window.pageYOffset, d = n - y;
+      y = n;
+      if (n < 60) { up = dn = 0; body.classList.remove("nav-away"); tight(false); return; }
+      tight(true);
+      if (d > 0) { dn += d; up = 0; if (dn > 14) body.classList.add("nav-away"); }
+      else if (d < 0) { up -= d; dn = 0; if (up > 90) body.classList.remove("nav-away"); }
+    };
+    addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+    addEventListener("resize", () => {
+      if (body.classList.contains("nav-tight")) { body.classList.remove("nav-tight"); tight(true); }
     }, { passive: true });
     // a chip reached by keyboard must never be the one that is off-screen
     addEventListener("focusin", (e) => {
-      if (bar.contains(e.target as Node)) body.classList.remove("nav-away");
+      if (bar.contains(e.target as Node)) { body.classList.remove("nav-away"); tight(false); }
     });
+    frame();
   }
 </script>
